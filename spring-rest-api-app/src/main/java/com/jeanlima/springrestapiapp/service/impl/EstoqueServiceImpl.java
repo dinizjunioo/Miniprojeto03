@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.jeanlima.springrestapiapp.exception.PedidoNaoEncontradoException;
 import com.jeanlima.springrestapiapp.model.Estoque;
@@ -11,6 +12,10 @@ import com.jeanlima.springrestapiapp.model.Produto;
 import com.jeanlima.springrestapiapp.repository.EstoqueRepository;
 import com.jeanlima.springrestapiapp.service.EstoqueService;
 
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class EstoqueServiceImpl implements EstoqueService{
     @Autowired
     private EstoqueRepository estoqueRepository;
