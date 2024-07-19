@@ -1,7 +1,6 @@
 
 package com.jeanlima.springrestapiapp.rest.controllers;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,21 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jeanlima.springrestapiapp.enums.StatusPedido;
-import com.jeanlima.springrestapiapp.model.Cliente;
 import com.jeanlima.springrestapiapp.model.ItemPedido;
 import com.jeanlima.springrestapiapp.model.Pedido;
 
-import com.jeanlima.springrestapiapp.repository.ClienteRepository;
-import com.jeanlima.springrestapiapp.repository.PedidoRepository;
 
 import com.jeanlima.springrestapiapp.rest.dto.AtualizacaoStatusPedidoDTO;
 import com.jeanlima.springrestapiapp.rest.dto.InformacaoItemPedidoDTO;
 import com.jeanlima.springrestapiapp.rest.dto.InformacoesPedidoDTO;
-import com.jeanlima.springrestapiapp.rest.dto.ItemPedidoDTO;
 import com.jeanlima.springrestapiapp.rest.dto.PedidoDTO;
-
+import com.jeanlima.springrestapiapp.service.ItemPedidoService;
 import com.jeanlima.springrestapiapp.service.PedidoService;
-
+// import com.jeanlima.springrestapiapp.repository.ClienteRepository;
+// import com.jeanlima.springrestapiapp.repository.PedidoRepository;
+// import com.jeanlima.springrestapiapp.rest.dto.ItemPedidoDTO;
+// import com.jeanlima.springrestapiapp.model.Cliente;
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
@@ -43,67 +42,14 @@ public class PedidoController {
     private PedidoService service;
 
     @Autowired
-    private ClienteRepository clientes;
-
-    @Autowired
-    private PedidoRepository pedidoRepository;
-
+    private ItemPedidoService itemPedidoService;
     
-    //Requisição para retornar dados do cliente e seus pedidos:
-    @GetMapping("/{id}/pedidos")
-    //public InformacoesPedidoDTO 
-    void getClientePedidos(@PathVariable Integer id) {
-        Cliente cliente = clientes.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
-
-        List<Pedido> pedidos = pedidoRepository.findByCliente(cliente);
-
-        List<PedidoDTO> pedidosDTO = pedidos.stream()
-        .map(pedido -> {
-            PedidoDTO pedidoDTO = new PedidoDTO();
-            // Preencher dados do PedidoDTO
-            pedidoDTO.setCliente(pedido.getCliente().getId());
-            pedidoDTO.setTotal(pedido.getTotal());
-            // Mapear itens do pedido para ItemPedidoDTO
-            List<ItemPedidoDTO> itensDTO = pedido.getItens().stream()
-                .map(item -> {
-                    ItemPedidoDTO itemDTO = new ItemPedidoDTO();
-                    itemDTO.setProduto(item.getProduto().getId());
-                    itemDTO.setQuantidade(item.getQuantidade());
-                    return itemDTO;
-                })
-                .collect(Collectors.toList());
-    
-            pedidoDTO.setItems(itensDTO);
-    
-            return pedidoDTO;
-        })
-        .collect(Collectors.toList());
-    
-        List<InformacoesPedidoDTO> infosPedidoDTO = pedidos.stream()
-        .map(infoPedido -> {
-            InformacoesPedidoDTO infosPedidos = new InformacoesPedidoDTO();
-            infosPedidos.setCodigo(infoPedido.getId());
-            infosPedidos.setNomeCliente(infoPedido.getCliente().getNome());
-            infosPedidos.setCpf(infoPedido.getCliente().getCpf());
-            infosPedidos.setTotal(infoPedido.getTotal());
-            infosPedidos.setDataPedido(infoPedido.getDataPedido());
-            infosPedidos.setStatus(infoPedido.getStatus());
-            
-            List<InformacaoItemPedidoDTO> infosItemPedido = pedidosDTO.stream()
-                //.flatMap(pedido -> pedido.getItems().stream())
-                .map(infoItemPedido -> {
-                    InformacaoItemPedidoDTO itemPedido = new InformacaoItemPedidoDTO();
-                    //itemPedido.setDescricaoProduto(infoItemPedido.getDescricao());
-                    itemPedido.setPrecoUnitario(infoItemPedido.getTotal());
-                    itemPedido.setQuantidade(infoItemPedido.getItems().get(infoItemPedido.getCliente()).getQuantidade());
-                    return itemPedido;
-            }).collect(Collectors.toList());
-            return infosPedidos;
-        }).collect(Collectors.toList());
-
-        //return new InformacoesPedidoDTO(cliente, infosPedidoDTO);
-    }
+    //@Autowired
+    //private PedidoService pedidoService;
+    //@Autowired
+    //private ClienteRepository clientes;
+    //@Autowired
+    //private PedidoRepository pedidoRepository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -148,13 +94,29 @@ public class PedidoController {
         ).collect(Collectors.toList());
     }
 
-     @PatchMapping("{id}")
+    @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@PathVariable Integer id ,
-                             @RequestBody AtualizacaoStatusPedidoDTO dto){
+    public void updateStatus(@PathVariable Integer id, @RequestBody AtualizacaoStatusPedidoDTO dto){
         String novoStatus = dto.getNovoStatus();
         service.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
     }
 
+
+    // @DeleteMapping("{id}")
+    // @ResponseStatus(HttpStatus.NO_CONTENT)
+    // public void delete(@PathVariable Integer id) {
+    //     pedidoRepository.findById(id)
+    //         .map(pedido -> {
+    //             pedidoRepository.delete(pedido);
+    //         return Void.TYPE;
+    //     })
+    //     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
+    // }
+
     
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        itemPedidoService.deletarPedido(id);
+    }   
 }

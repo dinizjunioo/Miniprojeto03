@@ -1,24 +1,17 @@
 package com.jeanlima.springrestapiapp.model;
-
 import java.util.Set;
-
-
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "cliente") //opicional caso a tabela tenha nome igual da entidadeou caso use schema!
+@Table(name = "cliente") //opicional caso a tabela tenha nome igual da entidad eou caso use schema!
 public class Cliente {
     
     @Id
@@ -42,26 +35,27 @@ public class Cliente {
     @JsonIgnore
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<Pedido> pedidos;
-
     
     public Cliente() {
     }
     public Cliente(String nome) {
         this.nome = nome;
     }
+    
     public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
         this.id = id;
     }
+    
     public String getNome() {
         return nome;
     }
     public void setNome(String nome) {
         this.nome = nome;
     }
-
+    
     public Set<Pedido> getPedidos() {
         return pedidos;
     }
@@ -73,12 +67,14 @@ public class Cliente {
     public String toString() {
         return "Cliente [id=" + id + ", nome=" + nome + "]";
     }
+    
     public String getCpf() {
         return cpf;
     }
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -88,6 +84,7 @@ public class Cliente {
         result = prime * result + ((cpf == null) ? 0 : cpf.hashCode());
         return result;
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -113,11 +110,5 @@ public class Cliente {
         } else if (!cpf.equals(other.cpf))
             return false;
         return true;
-    }
-
-    
-    
-
-    
-    
+    }   
 }

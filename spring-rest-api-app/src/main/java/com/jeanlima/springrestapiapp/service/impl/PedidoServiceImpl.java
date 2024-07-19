@@ -89,7 +89,6 @@ public class PedidoServiceImpl implements PedidoService {
             pedido.setStatus(statusPedido);
             return repository.save(pedido);
         }).orElseThrow(() -> new PedidoNaoEncontradoException() );
-    }
-    
+    }  
     
 }

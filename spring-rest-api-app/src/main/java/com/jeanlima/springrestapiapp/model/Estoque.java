@@ -1,32 +1,32 @@
 package com.jeanlima.springrestapiapp.model;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "item_pedido")
-public class ItemPedido {
-
+@Table(name = "estoque")
+public class Estoque {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "pedido_id")
-    private Pedido pedido;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
     @Column
     private Integer quantidade;
+
+    public Estoque() {
+    }
     
     public Integer getId() {
         return id;
@@ -34,34 +34,36 @@ public class ItemPedido {
     public void setId(Integer id) {
         this.id = id;
     }
-    public Pedido getPedido() {
-        return pedido;
-    }
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
+    
     public Produto getProduto() {
         return produto;
     }
     public void setProduto(Produto produto) {
         this.produto = produto;
     }
+    
     public Integer getQuantidade() {
         return quantidade;
     }
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
+
+    @Override
+    public String toString() {
+        return "Cliente [id=" + id + ", produto =" + produto.getDescricao() + ", quantidade=" + quantidade  + "]";
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((pedido == null) ? 0 : pedido.hashCode());
         result = prime * result + ((produto == null) ? 0 : produto.hashCode());
         result = prime * result + ((quantidade == null) ? 0 : quantidade.hashCode());
         return result;
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -70,16 +72,11 @@ public class ItemPedido {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ItemPedido other = (ItemPedido) obj;
+        Estoque other = (Estoque) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (pedido == null) {
-            if (other.pedido != null)
-                return false;
-        } else if (!pedido.equals(other.pedido))
             return false;
         if (produto == null) {
             if (other.produto != null)
@@ -93,9 +90,5 @@ public class ItemPedido {
             return false;
         return true;
     }
-    @Override
-    public String toString() {
-        return "ItemPedido [id=" + id + ", pedido=" + pedido + ", produto=" + produto + ", quantidade=" + quantidade
-                + "]";
-    }
 }
+

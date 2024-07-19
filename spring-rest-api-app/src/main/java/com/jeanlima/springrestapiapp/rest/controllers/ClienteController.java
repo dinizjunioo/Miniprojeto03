@@ -18,9 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.jeanlima.springrestapiapp.model.Cliente;
+import com.jeanlima.springrestapiapp.model.Pedido;
 import com.jeanlima.springrestapiapp.repository.ClienteRepository;
+import com.jeanlima.springrestapiapp.repository.PedidoRepository;
+import com.jeanlima.springrestapiapp.rest.dto.InformacaoItemPedidoDTO;
+import com.jeanlima.springrestapiapp.rest.dto.InformacoesPedidoDTO;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RequestMapping("/api/clientes")
@@ -30,11 +36,15 @@ public class ClienteController {
     @Autowired
     private ClienteRepository clientes;
 
+    @Autowired
+    private PedidoRepository pedidoRepository;
+
     // Atualização de campos específicos do cliente (PATCH):
     @PatchMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePartial(@PathVariable Integer id, @RequestBody Map<String, Object> objectForUpdate) 
     {
+        System.out.println("atualizando corretamente...");
         Cliente cliente = clientes.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
 
