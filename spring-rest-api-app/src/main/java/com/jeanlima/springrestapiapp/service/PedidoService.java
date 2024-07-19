@@ -12,5 +12,5 @@ public interface PedidoService {
     Pedido salvar( PedidoDTO dto );
     Optional<Pedido> obterPedidoCompleto(Integer id);
     void atualizaStatus(Integer id, StatusPedido statusPedido);
-    
+    public void atualizar(Integer id, PedidoDTO dto);
 }
